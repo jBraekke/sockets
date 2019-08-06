@@ -4,65 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Meld opp kadidat</title>
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <script src="./socket.io.js"></script>
+
 </head>
 
-<script src="./socket.io.js"></script>
-
-
 <body>
-    <p>Meld inn kandidat</p>
-    <form id="myForm" action="">
-        Kandidat id: <input type="text" name="fname"><br>
-        <button id="myButton" type="submit">Meld opp</button>
-    </form>
+    <div class="login-container">
+        <section class="login" id="login">
+            <header>
+                <h2>Meld opp kandidat</h2>
+            </header>
+            <form class="login-form" id="myForm" action="">
+                <input class="login-input" type="text" placeholder="Bruker Id" name="fname" autofocus>
 
-    <p>Kandidater</p>
-    <ul id="kandidater">
+                <br />
+                <div class="select">
+                    <select class="select-text" id="klasser" name="klasse" required>
+                        <option value="" disabled selected></option>
+                    </select>
+                    <span class="select-highlight"></span>
+                    <span class="select-bar"></span>
+                    <label class="select-label">Klasse</label>
+                </div>
+                <button id="myButton" class="login-button" type="submit">Meld opp</button>
+            </form>
+        </section>
+    </div>
 
-    </ul>
+
+    <div class="login-container">
+        <section class="login">
+            <header>
+                <h2>Kandidater</h2>
+            </header>
+            <form class="login-form" id="myForm" action="">
+                <ul class="list-group" id="kandidater">
+
+                </ul>
+            </form>
+        </section>
+    </div>
 </body>
-
-<script>
-
-    var socket = io.connect('https://vegvesen.herokuapp.com');
-    
-    socket.on('all-users', function (users) {
-        printUsers(users);
-    });
-
-    document.getElementById("myForm").addEventListener("submit", function (e) {
-
-        e.preventDefault();
-
-        var bruker = e.target['fname'].value
-
-        socket.emit('new-user', { user: bruker });
-
-        e.target.reset();
-    });
-    setTimeout(() => {
-        socket.emit('init');
-    }, 200)
-
-    socket.on('init-user-load', (users) => {
-        console.log('all users', users);
-    })
-
-    socket.on('new-user-emitted', function (users) {
-        printUsers(users);
-    });
-
-    function printUsers(users) {
-        var ul = document.getElementById('kandidater');
-        ul.innerHTML = null;
-        users.forEach(element => {
-            var li = document.createElement('li');
-            li.setAttribute('class', 'item');
-            li.innerHTML = li.innerHTML + element
-
-            ul.appendChild(li);
-        });
-    }
-</script>
+<script src="app.js"></script>
 
 </html>

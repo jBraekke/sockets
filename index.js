@@ -20,12 +20,21 @@ app.get('/', function (request, response) {
   response.sendFile((path.join(__dirname+'/index.html')));
 });
 
+app.get('/melder', function (request, response) {
+  response.sendFile((path.join(__dirname+'/public/melder.html')));
+});
+
 io.on('connection', function (socket) {
     socket.emit('all-users', users);
 
-    socket.on('new-user', data => {
-        users.push(data.user);
+    socket.on('new-user', user => {
+        users.push(user);
         io.emit('new-user-emitted', users);
     });
+
+    socket.on('login', user => {
+      users.filter((element) => { return element.user === user.user})[0].aktiv = true
+      io.emit('new-user-emitted', users);
+    })
 
   });
