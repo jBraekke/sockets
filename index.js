@@ -40,7 +40,7 @@ io.on('connection', function (socket) {
   })
 
   socket.on('new-list', items => {
-    if (list.length === 0) {
+    if (items.length > 0) {
       items.forEach(element => {
         list.push(element);
       });
@@ -55,6 +55,6 @@ io.on('connection', function (socket) {
 
       socket.emit('all-list', list);
     }
-  }, 1000)
+  }, 3000)
 
 });
