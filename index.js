@@ -41,6 +41,11 @@ io.on('connection', function (socket) {
 
   socket.on('new-list', items => {
     if (items.length > 0) {
+
+      while (list.length > 0) {
+        list.pop();
+      }
+
       items.forEach(element => {
         list.push(element);
       });
