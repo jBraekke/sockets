@@ -67,33 +67,19 @@ io.on('connection', function (socket) {
   setInterval(() => {
     if (list.length > 0) {
       const status = statuser[0];
-      let fnavn = fornavn[Math.floor(Math.random() * fornavn.length)];
-      let enavn = etternavn[Math.floor(Math.random() * etternavn.length)];
+      let navn = fornavn[Math.floor(Math.random() * fornavn.length)] + " " + etternavn[Math.floor(Math.random() * etternavn.length)];
 
       const item = {
-        "id": 3,
-        "klasse": {
-          "id": 2,
-          "klassekode": "B",
-          "navn": "Personbil",
-          "aktor": "TRAFIKANT"
-        },
-        "startetDatoTid": null,
-        "levertDatoTid": null,
-        "kandidat": {
-          "id": 3,
-          "fornavn": fnavn,
-          "etternavn": enavn,
-          "fodselsnr": "19011888014",
-          "fodselsdato": "2000-05-01"
-        },
-        "innloggetDatoTid": null,
-        "avsluttetDatoTid": null,
-        "status": status,
-        "provetype": "DROP_IN",
-        "tilgjengeligTidMinutter": 90,
-        "bruktTidMinutter": 0,
-        "plass": 0
+        bruktTid: "00:00",
+        fodselsnr: "19011888014",
+        id: 3,
+        klasse: "B",
+        menu: "",
+        navn,
+        plassering: 0,
+        provetype: "DROP_IN",
+        status,
+        tilgjengeligTid: "01:30"
       }
 
       list.push(item);
