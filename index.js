@@ -5,42 +5,31 @@ var server = require('http').createServer(app);
 var path = require("path");
 var io = require('socket.io')(server);
 var schedule = require('node-schedule');
-
+var fetch = require('node-fetch');
 
 const users = [];
 const list = [];
-const statuser = ['KLARGJORT', 'LOGGET_PAA', 'STARTET', 'INNSYN_PAAGAAR', 'AVSLUTTET']
-const fornavn = ['Bjarne', 'Lise', 'Hans', 'Johannes', 'Line', 'Sara', 'Henrich', 'Lisa', 'Morten']
-const etternavn = ['Hansen', 'Normann', 'Monsen', 'Larsen', 'Henriksen', 'Lichmann', 'Mortensen']
 
-function shuffleList() {
-  if (list.length > 0) {
-    const status = statuser[Math.floor(Math.random() * statuser.length)];
-    const item = list[Math.floor(Math.random() * list.length)];
-    item.status = status;
+function requestOptions() {
+  return {
+      headers: {
+          'Authorization': 'Bearer svv_oppgaveutvikler',
+          'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      method: 'GET',
   }
-  return list;
 }
 
-function addToOneRandomToList() {
-  const status = statuser[0];
-  const fnavn = fornavn[Math.floor(Math.random() * fornavn.length)]
-  let navn = fnavn + " " + etternavn[Math.floor(Math.random() * etternavn.length)];
 
-  const item = {
-    bruktTid: "00:00",
-    fodselsnr: "19011888014",
-    id: 3,
-    klasse: "B",
-    menu: "",
-    navn,
-    plassering: 0,
-    provetype: "DROP_IN",
-    status,
-    tilgjengeligTid: "01:30"
-  }
+async function hentPaagaende() {
 
-  list.push(item);
+  const response = await fetch('http://localhost:8088/backend/api/prove/paagaaende', requestOptions);
+
+  const data = await response.json();
+
+  return data;
+
 }
 
 app.set('port', (process.env.PORT || 5000));
@@ -61,7 +50,10 @@ app.get('/melder', function (request, response) {
 });
 
 io.on('connection', function (socket) {
-  socket.emit('all-users', users);
+  schedule.scheduleJob('*/2 * * * * *', async function () {
+    const liste = await hentPaagaende();
+    socket.emit('all-list', liste);
+  });
 
   socket.on('new-user', user => {
     users.push(user);
@@ -83,16 +75,6 @@ io.on('connection', function (socket) {
       items.forEach(element => {
         list.push(element);
       });
-    }
-  });
-
-  schedule.scheduleJob('10 * * * *', function () {
-    if (list.length > 0) {
-
-      shuffleList();
-      addToOneRandomToList()
-
-      socket.emit('all-list', list);
     }
   });
 });
