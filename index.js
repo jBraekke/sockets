@@ -4,6 +4,8 @@ var app = express();
 var server = require('http').createServer(app);
 var path = require("path");
 var io = require('socket.io')(server);
+var schedule = require('node-schedule');
+
 
 const users = [];
 const list = [];
@@ -64,10 +66,11 @@ io.on('connection', function (socket) {
     }
   }, 3000)
 
-  setInterval(() => {
+  schedule.scheduleJob('10 * * * *', function () {
     if (list.length > 0) {
       const status = statuser[0];
-      let navn = fornavn[Math.floor(Math.random() * fornavn.length)] + " " + etternavn[Math.floor(Math.random() * etternavn.length)];
+      const fnavn = fornavn[Math.floor(Math.random() * fornavn.length)]
+      let navn = fnavn + " " + etternavn[Math.floor(Math.random() * etternavn.length)];
 
       const item = {
         bruktTid: "00:00",
@@ -86,6 +89,5 @@ io.on('connection', function (socket) {
 
       socket.emit('all-list', list);
     }
-  }, 5000)
-
+  });
 });
