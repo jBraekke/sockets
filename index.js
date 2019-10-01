@@ -13,6 +13,36 @@ const statuser = ['KLARGJORT', 'LOGGET_PAA', 'STARTET', 'INNSYN_PAAGAAR', 'AVSLU
 const fornavn = ['Bjarne', 'Lise', 'Hans', 'Johannes', 'Line', 'Sara', 'Henrich', 'Lisa', 'Morten']
 const etternavn = ['Hansen', 'Normann', 'Monsen', 'Larsen', 'Henriksen', 'Lichmann', 'Mortensen']
 
+function shuffleList() {
+  if (list.length > 0) {
+    const status = statuser[Math.floor(Math.random() * statuser.length)];
+    const item = list[Math.floor(Math.random() * list.length)];
+    item.status = status;
+  }
+  return list;
+}
+
+function addToOneRandomToList() {
+  const status = statuser[0];
+  const fnavn = fornavn[Math.floor(Math.random() * fornavn.length)]
+  let navn = fnavn + " " + etternavn[Math.floor(Math.random() * etternavn.length)];
+
+  const item = {
+    bruktTid: "00:00",
+    fodselsnr: "19011888014",
+    id: 3,
+    klasse: "B",
+    menu: "",
+    navn,
+    plassering: 0,
+    provetype: "DROP_IN",
+    status,
+    tilgjengeligTid: "01:30"
+  }
+
+  list.push(item);
+}
+
 app.set('port', (process.env.PORT || 5000));
 
 // Routing
@@ -56,36 +86,11 @@ io.on('connection', function (socket) {
     }
   });
 
-  setInterval(() => {
-    if (list.length > 0) {
-      const status = statuser[Math.floor(Math.random() * statuser.length)];
-      const item = list[Math.floor(Math.random() * list.length)];
-      item.status = status;
-
-      socket.emit('all-list', list);
-    }
-  }, 3000)
-
   schedule.scheduleJob('10 * * * *', function () {
     if (list.length > 0) {
-      const status = statuser[0];
-      const fnavn = fornavn[Math.floor(Math.random() * fornavn.length)]
-      let navn = fnavn + " " + etternavn[Math.floor(Math.random() * etternavn.length)];
 
-      const item = {
-        bruktTid: "00:00",
-        fodselsnr: "19011888014",
-        id: 3,
-        klasse: "B",
-        menu: "",
-        navn,
-        plassering: 0,
-        provetype: "DROP_IN",
-        status,
-        tilgjengeligTid: "01:30"
-      }
-
-      list.push(item);
+      shuffleList();
+      addToOneRandomToList()
 
       socket.emit('all-list', list);
     }
