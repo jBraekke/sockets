@@ -1,4 +1,4 @@
-var socket = io.connect('https://vegvesen.herokuapp.com');
+var socket = io.connect('ws://vegvesen.herokuapp.com');
 //var socket = io.connect('http://localhost:5000');
 
 socket.on('all-users', function (users) {
